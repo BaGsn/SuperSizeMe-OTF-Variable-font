@@ -126,7 +126,8 @@
 			font,
 			font0,
 			font1,
-			coef=0;
+			coefx;
+			coefy=0;
 		
 		// importScripts doesn't work with inline worker.
 		// The following placeholder will be replaced with plumin source.
@@ -150,53 +151,67 @@
 		
 		onmessage = function( message ) {
 			var data = message.data;
-		
 			switch ( Object.prototype.toString.call(data) ) {
 			// parse incoming .otf ArrayBuffers
 			case '[object Object]':
-				if ( !data.lig || data.lig.constructor !== ArrayBuffer ) {
-					return;
+				if ( Object.keys(data)[0] === "lig"){
+					if ( !data.lig || data.lig.constructor !== ArrayBuffer ) {
+						return;
+					}
+			
+					otFont = plumin.opentype.parse( data.lig );
+					otFont0 = plumin.opentype.parse( data.lig );
+					otFont1 = plumin.opentype.parse( data.hea );
+			
+					//console.log(plumin.opentype.parse( data.lig ));
+					//console.log(plumin.opentype.parse( data.lig ));
+			
+					font = new plumin.paper.Font();
+					// save default encoding
+					var encoding = font.ot.encoding;
+					font.importOT( otFont );
+					font.ot.familyName = 'font';
+					font.ot.encoding = encoding;
+			
+					font0 = new plumin.paper.Font();
+					font0.importOT( otFont0 );
+					font0.ot.familyName = 'font0';
+			
+					font1 = new plumin.paper.Font();
+					font1.importOT( otFont1 );
+					font1.ot.familyName = 'font1';
+					break;
+				}else if ( Object.keys(data)[0] === "x" && data.x!="undefined"){
+					if (font) {
+						for(var i=0;i<Object.keys(data)[0].length;i++){
+							coefx=data.x[i];
+							coefy=data.y[i];
+							font.interpolate(font0, font1, coefx, coefy);
+							font.updateOTCommands();
+							font.addToFonts(i);
+						}
+				
+					}
+				
+					break;
 				}
-		
-				otFont = plumin.opentype.parse( data.lig );
-				otFont0 = plumin.opentype.parse( data.lig );
-				otFont1 = plumin.opentype.parse( data.hea );
-		
-				//console.log(plumin.opentype.parse( data.lig ));
-				//console.log(plumin.opentype.parse( data.lig ));
-		
-				font = new plumin.paper.Font();
-				// save default encoding
-				var encoding = font.ot.encoding;
-				font.importOT( otFont );
-				font.ot.familyName = 'font';
-				font.ot.encoding = encoding;
-		
-				font0 = new plumin.paper.Font();
-				font0.importOT( otFont0 );
-				font0.ot.familyName = 'font0';
-		
-				font1 = new plumin.paper.Font();
-				font1.importOT( otFont1 );
-				font1.ot.familyName = 'font1';
-				break;
 		
 			// parse incoming subset
 			case '[object String]':
 				// TODO: optimize to only interpolate new glyphs added to the subset
 				if (font) {
 					font.subset = data;
-					font.interpolate(font0, font1, coef);
+					font.interpolate(font0, font1, coefx, coefy);
 					font.updateOTCommands();
 					font.addToFonts();
 				}
 				break;
-		
+
 			// parse incoming interpolation coef
 			case '[object Array]':
 				if (font) {
-					data.forEach(function(coef, i) {
-						font.interpolate(font0, font1, coef);
+					data.forEach(function(coefx, i) {
+						font.interpolate(font0, font1, coefx, coefx);
 						font.updateOTCommands();
 						font.addToFonts(i);
 					})

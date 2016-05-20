@@ -14,12 +14,12 @@ newStyle.appendChild(document.createTextNode("\
 @font-face {font-family: 'FontMiddle';src: url('" + fontBook.urlMiddle + "');}\
 @font-face {font-family: 'FontMaxi';src: url('" + fontBook.urlMaxi + "');}\
 *:focus {outline: none;}\
-body{overflow-x:hidden;}\
 .container{display: inline-block;position: relative;width: 100%;height;100px;white-space: nowrap;}\
+.container.alone{display: block;}\
 .hiddenTextMin{font-family: FontMini;}\
 .hiddenTextMid{font-family: FontMiddle;}\
 .hiddenTextMax{font-family: FontMaxi;}\
-.hiddenTextMin, .hiddenTextMid, .hiddenTextMax{position: absolute;top:-9999px;width: 100%;}\
+.hiddenTextMin, .hiddenTextMid, .hiddenTextMax{position: absolute;top:-9999px;left:-9999px;width: 100%;}\
 .visibleText{position: relative;width: 100%;}\
 .rl{position: absolute;transform-origin: left;}\
 .rt{display: none;}\
@@ -61,7 +61,7 @@ var visibleText = document.getElementsByClassName("visibleText");
 var cA, cB, nbrInstA, nbrInstB, spanTxt, rt, bMid, iMid, valeurLigne;
 var large = window.innerWidth;
 document.body.onload=function(){Promise.all([fontMini.load(), fontMiddle.load(), fontMaxi.load()]).then(function () {console.log('Font loaded');baseBuilder();interpolationComp();});};
-window.onresize=function(){transformLine();waitForFinalEvent(function(){interpolationTrans();}, 500, 'some unique string');};
+window.onresize=function(){/*loader=true;*/transformLine();waitForFinalEvent(function(){interpolationTrans();}, 500, 'some unique string');};
 window.matchMedia("print").addListener(function() {loader=true;interpolationTrans();})
 
 function baseBuilder(){
@@ -117,7 +117,7 @@ function blocBuilder(j, i, rt){
 
 	vt = document.createElement('div');
 	vt.className = "visibleText, a"+i;
-	//vt.setAttribute("contentEditable", true);
+	vt.setAttribute("contentEditable", true);
 	vt.setAttribute("onload", "interpolationComp();");
 	vt.setAttribute("oninput", "var class1 = this.className.split(' ')[1];div = document.querySelectorAll('span.'+class1);for(var i=0;i<div.length;i++){div[i].innerHTML=this.textContent;};waitForFinalEvent(function(){interpolationComp();}, 500, 'some unique string');");
 	vt.setAttribute("onkeypress", "if(event.keyCode == 13){event.preventDefault();/*newLine();interpolationComp();*/alert('No yet!')};");
@@ -181,24 +181,34 @@ function transformLine(){
 var calculLine=function(){
 	cA=0;
 	cB=0;
+	wspId = document.getElementsByClassName("workspace")[0];
+	rt = wspId.getElementsByClassName('rt');
 	for(var i=0; i<rl.length;i++){
 		if(rlMid[i].offsetWidth>hiddenTextMin[i].offsetWidth){
-			valeurLigne=((hiddenTextMin[i].offsetWidth/rlMin[i].offsetWidth)-1.15)/((rlMid[i].offsetWidth/rlMin[i].offsetWidth)-1.15);
+			valeurLigne=((hiddenTextMin[i].offsetWidth-rlMin[i].offsetWidth)/(rlMid[i].offsetWidth-rlMin[i].offsetWidth));
+			console.log(hiddenTextMin[i].offsetWidth+'/'+rl[i].offsetWidth);
 			lineListA.push(valeurLigne);
 			rl[i].style.fontFamily= "FontA"+cA+",FontMiddle";
+			if(loader===false){
+				rl[i].style.transform="scale("+ hiddenTextMin[i].offsetWidth/rlMid[i].offsetWidth +",1)";
+			};
 			cA++;
 		}else if(rlMid[i].offsetWidth==hiddenTextMin[i].offsetWidth){
 			rl[i].style.fontFamily="FontMiddle";
 		}else{
-			valeurLigne=((hiddenTextMin[i].offsetWidth/rlMid[i].offsetWidth)-1.05)/((rlMax[i].offsetWidth/rlMid[i].offsetWidth)-1.05);
+			valeurLigne=((hiddenTextMin[i].offsetWidth-rlMid[i].offsetWidth)/(rlMax[i].offsetWidth-rlMid[i].offsetWidth));
+			console.log(hiddenTextMin[i].offsetWidth+'/'+rl[i].offsetWidth);
 			lineListB.push(valeurLigne);
 			rl[i].style.fontFamily= "FontB"+cB+",FontMaxi";
+			if(loader===false){
+				rl[i].style.transform="scale("+ hiddenTextMin[i].offsetWidth/rlMax[i].offsetWidth +",1)";
+			};
 			cB++;
 		}
 	}
 	console.log('Liste A: '+lineListA);
 	console.log('Liste B: '+lineListB);
-	console.log('Liste C: '+fontBook.staticFontValue);
+	console.log('Liste C: x:'+fontBook.staticFontValue.x +' / y:'+fontBook.staticFontValue.y);
 }
 
 plumin.paper.setup('hidden-canvas');
@@ -218,7 +228,7 @@ var interpo=function(){
 		worker,
 		worker2,
 		worker3,
-		lastSubset = _subsetFromText("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]")
+		lastSubset = _subsetFromText(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 		// this font will be used for its addToFonts method
 		
 		if(nbrInstA!=0){ 
@@ -289,7 +299,6 @@ var interpo=function(){
 
 	function _initWorkerA() {
 		//lastSubset = _subsetFromText("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]")
-
 		worker = new Worker(
 			_URL.createObjectURL( new Blob(
 				[document.getElementById('workerscript')
@@ -302,10 +311,19 @@ var interpo=function(){
 		worker.postMessage(lastSubset);
 
 		worker.onmessage = function(e) {
-			lastBuffer = e.data.buf;
-			id = e.data.id;
-			font.addToFonts( lastBuffer, 'FontA' + id );
-			/*console.log(lastBuffer);*/
+			if(e.data.id!=undefined){
+				lastBuffer = e.data.buf;
+				id = e.data.id;
+				font.addToFonts( lastBuffer, 'FontA' + id );
+				//if(font){
+				for(i=0;i<rl.length;i++){
+					var test = 'FontA'+id+', FontMiddle';
+					if(rl[i].style.fontFamily==test){
+						rl[id].style.transform="";
+						console.log(rl[id].textContent);
+					}
+				}
+			}
 		};
 		_interpolate(0);
 	}
@@ -329,10 +347,12 @@ var interpo=function(){
 				lastBuffer = e.data.buf;
 				id = e.data.id;
 				font2.addToFonts( lastBuffer, 'FontB' + id );
-				//console.log(id);
-				if(font2.fontMap.FontB0||font2.fontMap.FontA0){
-					for(var i=0; i<rl.length;i++){
-						rl[i].style.transform="";
+				//if(font2){
+				for(i=0;i<rl.length;i++){
+					var test='FontB'+id+', FontMaxi';
+					if(rl[i].style.fontFamily==test){
+						rl[id].style.transform="";
+						console.log(rl[id].textContent);
 					}
 				}
 			}
@@ -400,7 +420,6 @@ var interpo=function(){
 		var values = Array(nbrInst).fill(0).map(function(val, i) {
 			return +value + i/nbrInst;
 		})*/
-		
 		if(nbrInstC!=0){ 
 			worker3.postMessage( fontBook.staticFontValue );
 		}

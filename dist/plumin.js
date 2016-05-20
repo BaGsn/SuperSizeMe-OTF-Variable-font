@@ -12500,9 +12500,9 @@ return /******/ (function(modules) { // webpackBootstrap
 			this._changed();
 		},
 	
-		interpolate: function(from, to, factor) {
-			var u = 1 - factor,
-				v = factor,
+		interpolate: function(from, to, factorx, factory) {
+			var fx = factorx,
+				fy = factory,
 				point1 = from._point,
 				point2 = to._point,
 				handleIn1 = from._handleIn,
@@ -12510,14 +12510,16 @@ return /******/ (function(modules) { // webpackBootstrap
 				handleOut2 = to._handleOut,
 				handleOut1 = from._handleOut;
 			this._point.set(
-					u * point1._x + v * point2._x,
-					u * point1._y + v * point2._y, true);
+					point1._x+fx*(point2._x-point1._x),
+					point1._y+fy*(point2._y-point1._y), true);
+					//u * point1._x + v * point2._x,
+					//u * point1._y + v * point2._y, true);
 			this._handleIn.set(
-					u * handleIn1._x + v * handleIn2._x,
-					u * handleIn1._y + v * handleIn2._y, true);
+					handleIn1._x+fx*(handleIn2._x-handleIn1._x),
+					handleIn1._y+fy*(handleIn2._y-handleIn1._y), true);
 			this._handleOut.set(
-					u * handleOut1._x + v * handleOut2._x,
-					u * handleOut1._y + v * handleOut2._y, true);
+					handleOut1._x+fx*(handleOut2._x-handleOut1._x),
+					handleOut1._y+fy*(handleOut2._y-handleOut1._y), true);
 			this._changed();
 		},
 	
@@ -14346,7 +14348,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			return loc ? loc.getPoint() : loc;
 		},
 	
-		interpolate: function(from, to, factor) {
+		interpolate: function(from, to, factorx, factory) {
 			var isPath = !this._children,
 				name = isPath ? '_segments' : '_children',
 				itemsFrom = from[name],
@@ -14367,7 +14369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				this[isPath ? 'removeSegments' : 'removeChildren'](length, current);
 			}
 			for (var i = 0; i < length; i++) {
-				items[i].interpolate(itemsFrom[i], itemsTo[i], factor);
+				items[i].interpolate(itemsFrom[i], itemsTo[i], factorx, factory);
 			}
 			if (isPath) {
 				this.setClosed(from._closed);
@@ -16546,14 +16548,14 @@ return /******/ (function(modules) { // webpackBootstrap
 					return inter;
 				while (inter) {
 					var seg = inter._segment,
-						nextSeg = seg && seg.getNext(),
+						nextSeg = seg.getNext(),
 						nextInter = nextSeg && nextSeg._intersection;
 					if (seg !== exclude && (isStart(seg) || isStart(nextSeg)
 						|| !seg._visited && !(nextSeg && nextSeg._visited)
 						&& (!operator
 							|| (!strict || isValid(seg))
 							&& (!(strict && nextInter && nextInter._overlap)
-								&& nextSeg && isValid(nextSeg)
+								&& isValid(nextSeg)
 								|| !strict && nextInter
 								&& isValid(nextInter._segment))
 						)))
@@ -16610,7 +16612,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						seg._visited = true;
 						break;
 					}
-					if (!seg._path || (seg._path._validOverlapsOnly && !isValid(seg)))
+					if (seg._path._validOverlapsOnly && !isValid(seg))
 						break;
 					if (!path) {
 						path = new Path(Item.NO_INSERT);
@@ -21149,12 +21151,13 @@ return /******/ (function(modules) { // webpackBootstrap
 		this.charMap[ unicode ] = this.glyphMap[ glyphName ];
 	};
 	
-	Font.prototype.interpolate = function( font0, font1, coef, set ) {
+	Font.prototype.interpolate = function( font0, font1, coefx, coefy, set ) {
 		this.getGlyphSubset( set ).map(function( glyph ) {
 			glyph.interpolate(
 				font0.glyphMap[glyph.name],
 				font1.glyphMap[glyph.name],
-				coef
+				coefx,
+				coefy
 			);
 		});
 	
@@ -21164,14 +21167,14 @@ return /******/ (function(modules) { // webpackBootstrap
 			for ( var i in this.ot.kerningPairs ) {
 				this.ot.kerningPairs[i] =
 					font0.ot.kerningPairs[i] +
-					( font1.ot.kerningPairs[i] - font0.ot.kerningPairs[i] ) * coef;
+					( font1.ot.kerningPairs[i] - font0.ot.kerningPairs[i] ) * coefx;
 			}
 		}
 	
 		this.ot.ascender =
-			font0.ot.ascender + ( font1.ot.ascender - font0.ot.ascender ) * coef;
+			font0.ot.ascender + ( font1.ot.ascender - font0.ot.ascender ) * coefx;
 		this.ot.descender =
-			font0.ot.descender + ( font1.ot.descender - font0.ot.descender ) * coef;
+			font0.ot.descender + ( font1.ot.descender - font0.ot.descender ) * coefx;
 	
 		return this;
 	};
@@ -21302,9 +21305,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 		var a = document.createElement('a');
 	
-		var triggerDownload = function( font, arrayBuffer, filename ) {
+		Font.prototype.download = function( arrayBuffer, name ) {
 			var reader = new FileReader();
-			var enFamilyName = filename || font.ot.getEnglishName('fontFamily');
+			var enFamilyName = typeof name === 'object' ?
+				name.family + ' ' + name.style :
+				name || this.ot.getEnglishName('fontFamily');
 	
 			reader.onloadend = function() {
 				a.download = enFamilyName + '.otf';
@@ -21318,32 +21323,9 @@ return /******/ (function(modules) { // webpackBootstrap
 			};
 	
 			reader.readAsDataURL(new Blob(
-				[ new DataView( arrayBuffer || font.toArrayBuffer() ) ],
+				[ new DataView( arrayBuffer || this.toArrayBuffer() ) ],
 				{ type: 'font/opentype' }
 			));
-		};
-	
-		Font.prototype.download = function( arrayBuffer, merged, name, user ) {
-			if ( merged ) {
-				// TODO: replace that with client-side font merging
-				fetch('https://merge.prototypo.io/' +
-					name.family + '/' +
-					name.style + '/' + user, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/otf' },
-						body: arrayBuffer
-				})
-				.then(function( response ) {
-					return response.arrayBuffer();
-				})
-				.then(function( bufferToDownload ) {
-					triggerDownload( this, bufferToDownload );
-				}.bind(this));
-	
-			} else {
-				triggerDownload(
-					this, arrayBuffer, name && ( name.family + ' ' + name.style ) );
-			}
 	
 			return this;
 		};
@@ -21495,34 +21477,34 @@ return /******/ (function(modules) { // webpackBootstrap
 		return this;
 	};
 	
-	Glyph.prototype.interpolate = function( glyph0, glyph1, coef ) {
+	Glyph.prototype.interpolate = function( glyph0, glyph1, coefx, coefy ) {
 		// If we added an interpolate method to Group, we'd be able to just
 		// interpolate all this.children directly.
 		// instead we interpolate the outline first
 		this.children[0].interpolate(
-			glyph0.children[0], glyph1.children[0], coef
+			glyph0.children[0], glyph1.children[0], coefx, coefy
 		);
 		// and then the components
 		this.children[1].children.forEach(function(component, j) {
 			component.interpolate(
-				glyph0.children[1].children[j], glyph1.children[1].children[j], coef
+				glyph0.children[1].children[j], glyph1.children[1].children[j], coefx, coefy
 			);
 		});
 	
 		this.ot.advanceWidth =
 			glyph0.ot.advanceWidth +
-			( glyph1.ot.advanceWidth - glyph0.ot.advanceWidth ) * coef;
+			( glyph1.ot.advanceWidth - glyph0.ot.advanceWidth ) * coefx;
 		this.ot.leftSideBearing =
 			glyph0.ot.leftSideBearing +
-			( glyph1.ot.leftSideBearing - glyph0.ot.leftSideBearing ) * coef;
+			( glyph1.ot.leftSideBearing - glyph0.ot.leftSideBearing ) * coefx;
 		this.ot.xMax =
-			glyph0.ot.xMax + ( glyph1.ot.xMax - glyph0.ot.xMax ) * coef;
+			glyph0.ot.xMax + ( glyph1.ot.xMax - glyph0.ot.xMax ) * coefx;
 		this.ot.xMin =
-			glyph0.ot.xMin + ( glyph1.ot.xMin - glyph0.ot.xMin ) * coef;
+			glyph0.ot.xMin + ( glyph1.ot.xMin - glyph0.ot.xMin ) * coefx;
 		this.ot.yMax =
-			glyph0.ot.yMax + ( glyph1.ot.yMax - glyph0.ot.yMax ) * coef;
+			glyph0.ot.yMax + ( glyph1.ot.yMax - glyph0.ot.yMax ) * coefx;
 		this.ot.yMin =
-			glyph0.ot.yMin + ( glyph1.ot.yMin - glyph0.ot.yMin ) * coef;
+			glyph0.ot.yMin + ( glyph1.ot.yMin - glyph0.ot.yMin ) * coefx;
 	
 		return this;
 	};
@@ -21674,7 +21656,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		return path._clone( result, false );
 	};
 	
-	Outline.prototype.interpolate = function( outline0, outline1, coef ) {
+	Outline.prototype.interpolate = function( outline0, outline1, coefx, coefy ) {
 		for (var i = 0, l = this.children.length; i < l; i++) {
 			// The number of children should be the same everywhere,
 			// but we're going to try our best anyway
@@ -21685,7 +21667,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			this.children[i].interpolate(
 				outline0.children[i],
 				outline1.children[i],
-				coef
+				coefx,
+				coefy
 			);
 		}
 	
