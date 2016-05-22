@@ -60,8 +60,8 @@ var hiddenTextMax = document.getElementsByClassName("hiddenTextMax");
 var visibleText = document.getElementsByClassName("visibleText");
 var cA, cB, nbrInstA, nbrInstB, spanTxt, rt, bMid, iMid, valeurLigne;
 var large = window.innerWidth;
-document.body.onload=function(){Promise.all([fontMini.load(), fontMiddle.load(), fontMaxi.load()]).then(function () {console.log('Font loaded');baseBuilder();interpolationComp();});};
-window.onresize=function(){/*loader=true;*/transformLine();waitForFinalEvent(function(){interpolationTrans();}, 500, 'some unique string');};
+document.body.onload=function(){Promise.all([fontMini.load(), fontMiddle.load(), fontMaxi.load()]).then(function () {console.log('Font loaded');baseBuilder();interpolationComp();buildLayers();});};
+window.onresize=function(){loader=true;transformLine();waitForFinalEvent(function(){interpolationTrans();}, 500, 'some unique string');};
 window.matchMedia("print").addListener(function() {loader=true;interpolationTrans();})
 
 function baseBuilder(){
@@ -119,7 +119,7 @@ function blocBuilder(j, i, rt){
 	vt.className = "visibleText, a"+i;
 	vt.setAttribute("contentEditable", true);
 	vt.setAttribute("onload", "interpolationComp();");
-	vt.setAttribute("oninput", "var class1 = this.className.split(' ')[1];div = document.querySelectorAll('span.'+class1);for(var i=0;i<div.length;i++){div[i].innerHTML=this.textContent;};waitForFinalEvent(function(){interpolationComp();}, 500, 'some unique string');");
+	vt.setAttribute("oninput", "var class1 = this.className.split(' ')[1];div = document.querySelectorAll('span.'+class1);for(var i=0;i<div.length;i++){div[i].innerHTML=this.textContent;};transformLine();waitForFinalEvent(function(){interpolationComp();}, 500, 'some unique string');");
 	vt.setAttribute("onkeypress", "if(event.keyCode == 13){event.preventDefault();/*newLine();interpolationComp();*/alert('No yet!')};");
 	container.appendChild(vt);
 }
@@ -158,6 +158,7 @@ function interpolationComp(){
 	calculLine();
 	transformLine();
 	interpo();
+	window.setTimeout(function(){resetTransform();}, 2000);
 }
 
 function interpolationTrans(){
@@ -173,8 +174,17 @@ function newLine(){
 }
 
 function transformLine(){
-	for(var i=0; i<rl.length;i++){
-		rl[i].style.transform="scale("+ hiddenTextMin[i].offsetWidth/rl[i].offsetWidth +",1)";
+	if(loader===false){
+		for(var i=0; i<rl.length;i++){
+			rl[i].style.transform="scale("+ hiddenTextMin[i].offsetWidth/rl[i].offsetWidth +",1)";
+		}
+	}
+}
+
+function resetTransform(){
+	for(i=0;i<rl.length;i++){
+		rl[i].style.transform="";
+		console.log("Reset "+i+" OK");
 	}
 }
 
@@ -186,7 +196,7 @@ var calculLine=function(){
 	for(var i=0; i<rl.length;i++){
 		if(rlMid[i].offsetWidth>hiddenTextMin[i].offsetWidth){
 			valeurLigne=((hiddenTextMin[i].offsetWidth-rlMin[i].offsetWidth)/(rlMid[i].offsetWidth-rlMin[i].offsetWidth));
-			console.log(hiddenTextMin[i].offsetWidth+'/'+rl[i].offsetWidth);
+			//console.log(hiddenTextMin[i].offsetWidth+'/'+rl[i].offsetWidth);
 			lineListA.push(valeurLigne);
 			rl[i].style.fontFamily= "FontA"+cA+",FontMiddle";
 			if(loader===false){
@@ -197,7 +207,7 @@ var calculLine=function(){
 			rl[i].style.fontFamily="FontMiddle";
 		}else{
 			valeurLigne=((hiddenTextMin[i].offsetWidth-rlMid[i].offsetWidth)/(rlMax[i].offsetWidth-rlMid[i].offsetWidth));
-			console.log(hiddenTextMin[i].offsetWidth+'/'+rl[i].offsetWidth);
+			//console.log(hiddenTextMin[i].offsetWidth+'/'+rl[i].offsetWidth);
 			lineListB.push(valeurLigne);
 			rl[i].style.fontFamily= "FontB"+cB+",FontMaxi";
 			if(loader===false){
@@ -320,7 +330,7 @@ var interpo=function(){
 					var test = 'FontA'+id+', FontMiddle';
 					if(rl[i].style.fontFamily==test){
 						rl[id].style.transform="";
-						console.log(rl[id].textContent);
+						//console.log(rl[id].textContent);
 					}
 				}
 			}
@@ -352,7 +362,7 @@ var interpo=function(){
 					var test='FontB'+id+', FontMaxi';
 					if(rl[i].style.fontFamily==test){
 						rl[id].style.transform="";
-						console.log(rl[id].textContent);
+						//console.log(rl[id].textContent);
 					}
 				}
 			}
