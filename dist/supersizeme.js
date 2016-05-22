@@ -60,7 +60,7 @@ var hiddenTextMax = document.getElementsByClassName("hiddenTextMax");
 var visibleText = document.getElementsByClassName("visibleText");
 var cA, cB, nbrInstA, nbrInstB, spanTxt, rt, bMid, iMid, valeurLigne;
 var large = window.innerWidth;
-document.body.onload=function(){Promise.all([fontMini.load(), fontMiddle.load(), fontMaxi.load()]).then(function () {console.log('Font loaded');baseBuilder();interpolationComp();buildLayers();});};
+document.body.onload=function(){Promise.all([fontMini.load(), fontMiddle.load(), fontMaxi.load()]).then(function () {console.log('Font loaded');baseBuilder();interpolationComp();});};
 window.onresize=function(){/*loader=true;*/transformLine();waitForFinalEvent(function(){interpolationTrans();}, 500, 'some unique string');};
 window.matchMedia("print").addListener(function() {/*loader=true;*/interpolationTrans();})
 
