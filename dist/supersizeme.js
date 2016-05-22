@@ -61,8 +61,8 @@ var visibleText = document.getElementsByClassName("visibleText");
 var cA, cB, nbrInstA, nbrInstB, spanTxt, rt, bMid, iMid, valeurLigne;
 var large = window.innerWidth;
 document.body.onload=function(){Promise.all([fontMini.load(), fontMiddle.load(), fontMaxi.load()]).then(function () {console.log('Font loaded');baseBuilder();interpolationComp();buildLayers();});};
-window.onresize=function(){loader=true;transformLine();waitForFinalEvent(function(){interpolationTrans();}, 500, 'some unique string');};
-window.matchMedia("print").addListener(function() {loader=true;interpolationTrans();})
+window.onresize=function(){/*loader=true;*/transformLine();waitForFinalEvent(function(){interpolationTrans();}, 500, 'some unique string');};
+window.matchMedia("print").addListener(function() {/*loader=true;*/interpolationTrans();})
 
 function baseBuilder(){
 	for(var j=0;j<workspace.length;j++){
