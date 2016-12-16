@@ -118,7 +118,7 @@ var newTxt = [String];
 myHTMLelement.updateText(newTxt);
 ```
 
---
+##Functions
 
 Change size:
 ``` javascript
