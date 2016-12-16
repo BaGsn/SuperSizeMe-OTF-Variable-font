@@ -116,6 +116,8 @@ ssm.elementsToFit = "#myId .myClass";
 ```
 **Default: _Null_**
 
+--
+
 Refresh the text or input a new one :
 ``` javascript
 var newTxt = [String];
