@@ -3,6 +3,63 @@
 Super Size Me is a free library under SIL Licence built on the top of [Plumin.js](https://github.com/byte-foundry/plumin.js) and [FontFaceObserver](https://github.com/bramstein/fontfaceobserver) that allow to easily stretch font to the size of its container.
 
 #How to use
-To use it, you only need to put your content in a class="workspace" and to apply class="rt" to each text you want to strech.
+To use it, you only need to apply class="rt" to each bloc of text you want to fit.
 
-This version is in really early stage and will evoluate a lot.
+##Installation
+Just import the 3 libraries in your HTML page.
+```html
+<script src="js/fontfaceobserver.js"></script>
+<script src="js/plumin.js"></script>
+<script src="js/supersizeme.js"></script>
+```
+
+##Configuration
+Run a fonction before SuperSizeMe.
+```javascript
+ssm.beforeLoad={
+myFunction();
+};
+```
+
+To run a fonction when all the fonts are ready be displayed:
+```javascript
+ssm.afterFontReady={
+myFunction();
+};
+```
+
+* To define a pre-rendered specific subset:
+```javascript
+ssm.subset = [String value];
+```
+**Default value: _Null_**
+
+* To change the opacity of the fitting preview:
+```javascript
+ssm.opacityPreview = [Number value];
+```
+**Default value: _0.5_**
+
+* Enable or disable the fitting preview:
+```javascript
+ssm.preview = [boolean value];
+```
+**Default value: _true_**
+
+* Enable or disable the text to fit to its container:
+```javascript
+ssm.fit = [boolean value];
+```
+**Default value: _true_**
+
+* Change the number of insterpolated fonts:
+```javascript
+ssm.generatedFontNbr = [Number value];
+```
+**Default value: _100_**
+
+* Add fitting elements without a 'rt' class:
+```javascript
+ssm.elementsToFit = "#myId .myClass";
+```
+**Default value: _Null_**
