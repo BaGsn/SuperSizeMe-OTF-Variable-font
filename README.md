@@ -178,6 +178,6 @@ myHTMLelement.updateAll();
 
 Add a new element to the SSM object:
 ``` javascript
-var myElement = document.getElementById(‘id’);
+var myElement = document.getElementById('#id, #class');
 ssm.build(myElement);
 ```
