@@ -3,7 +3,33 @@
 Super Size Me is a free library under SIL Licence built on the top of [Plumin.js](https://github.com/byte-foundry/plumin.js) and [FontFaceObserver](https://github.com/bramstein/fontfaceobserver) that allow to easily stretch font to the size of its container.
 
 #How to use
-To use it, you only need to apply class="rt" to each bloc of text you want to fit.
+To use it, you only need to apply a class [.rt] to the blocks of texts you want to fit.
+
+##Example
+``` html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Example</title>
+    <script src="js/fontfaceobserver.js"></script>
+    <script src="js/plumin.js"></script>
+    <script src="js/supersizeme.js"></script>
+    <script type="text/javascript">
+        ssm.fontBook = {  wdth :
+                        ['font/0.otf',
+                        'font/1.otf',
+                        'font/2.otf']
+                      };
+    </script>
+  </head>
+  <body>
+ 
+       <div class="rt" style="width:50%">Here a fitted text</div>
+        
+  </body>
+</html>
+```
 
 ##Installation
 Just import the 3 libraries in your HTML page.
