@@ -1,6 +1,6 @@
 # SuperSizeMe
 
-Super Size Me is a free library under SIL Licence built on the top of [Plumin.js](https://github.com/byte-foundry/plumin.js) and [FontFaceObserver](https://github.com/bramstein/fontfaceobserver) that allow to easily stretch font to the size of its container.
+SuperSizeMe is a free library under SIL Licence built on the top of [Plumin.js](https://github.com/byte-foundry/plumin.js) and [FontFaceObserver](https://github.com/bramstein/fontfaceobserver) that allow to easily stretch font to the size of its container.
 
 ##Online use example
 [Christmas Card from Sweden](http://christmascardfromsweden.se) | 2016-12-16
