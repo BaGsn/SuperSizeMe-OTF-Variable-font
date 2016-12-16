@@ -111,3 +111,71 @@ Add fitting elements without a 'rt' class:
 ssm.elementsToFit = "#myId .myClass";
 ```
 **Default: _Null_**
+
+Refresh the text or input a new one :
+``` javascript
+var newTxt = [String];
+myHTMLelement.updateText(newTxt);
+```
+
+—
+
+Change size:
+``` javascript
+var width = [Number];
+var height = [Number];
+myHTMLelement.updateSize(width, height);
+```
+
+—
+
+``` javascript
+Apply the specific fitted font:
+myHTMLelement.updateInterpolation();
+```
+
+—
+
+``` javascript
+Fit the font with css transformation (preview):
+myHTMLelement.updatePreview();
+```
+
+—
+
+``` javascript
+Create a specific interpolated font:
+myHTMLelement.interpolate();
+```
+
+—
+
+``` javascript
+Create the full spectrum of font intances:
+ssm.interpolate( object, subset );
+```
+
+—
+
+``` javascript
+**var _masterValue_: [Number];** //between _0_ and _ssm.fontBook.wdth.length_
+**var _factorValue_: [Number];** //between _0_ and _1_)
+**var _nameValue_: [String];
+
+var object = { master: masterValue, factor: factorValue, name: nameValue };
+```
+
+—
+
+``` javascript
+Update the text and the state of the font:
+myHTMLelement.updateAll();
+```
+
+—
+
+``` javascript
+Add a new element to the SSM object:
+var myElement = document.getElementById(‘id’);
+ssm.build(myElement);
+```
