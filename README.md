@@ -6,6 +6,15 @@ Super Size Me is a free library under SIL Licence built on the top of [Plumin.js
 [Christmas Card from Sweden](http://christmascardfromsweden.se) | 2016-12-16
 
 #How to use
+
+##Installation
+Just import the 3 libraries in your HTML page.
+```html
+<script src="js/fontfaceobserver.js"></script>
+<script src="js/plumin.js"></script>
+<script src="js/supersizeme.js"></script>
+```
+
 To use it, you only need to apply a class [.rt] to the blocks of texts you want to fit.
 
 ##Example
@@ -32,14 +41,6 @@ To use it, you only need to apply a class [.rt] to the blocks of texts you want 
         
   </body>
 </html>
-```
-
-##Installation
-Just import the 3 libraries in your HTML page.
-```html
-<script src="js/fontfaceobserver.js"></script>
-<script src="js/plumin.js"></script>
-<script src="js/supersizeme.js"></script>
 ```
 
 ##Configuration
