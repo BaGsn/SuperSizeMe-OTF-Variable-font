@@ -30,36 +30,36 @@ myFunction();
 
 * To define a pre-rendered specific subset:
 ```javascript
-ssm.subset = [String value];
+ssm.subset = [String];
 ```
-**Default value: _Null_**
+**Default: _Null_**
 
 * To change the opacity of the fitting preview:
 ```javascript
-ssm.opacityPreview = [Number value];
+ssm.opacityPreview = [Number];
 ```
-**Default value: _0.5_**
+**Default: _0.5_**
 
 * Enable or disable the fitting preview:
 ```javascript
-ssm.preview = [boolean value];
+ssm.preview = [Boolean];
 ```
-**Default value: _true_**
+**Default: _true_**
 
 * Enable or disable the text to fit to its container:
 ```javascript
-ssm.fit = [boolean value];
+ssm.fit = [Boolean];
 ```
-**Default value: _true_**
+**Default: _true_**
 
 * Change the number of insterpolated fonts:
 ```javascript
-ssm.generatedFontNbr = [Number value];
+ssm.generatedFontNbr = [Number];
 ```
-**Default value: _100_**
+**Default: _100_**
 
 * Add fitting elements without a 'rt' class:
 ```javascript
 ssm.elementsToFit = "#myId .myClass";
 ```
-**Default value: _Null_**
+**Default: _Null_**
