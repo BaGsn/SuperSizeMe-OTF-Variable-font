@@ -54,7 +54,7 @@ myFunction();
 
 --
 
-Run a fonction when all the fonts are ready be displayed:
+Run a fonction when all the fonts are ready to be displayed:
 ```javascript
 ssm.afterFontReady={
 myFunction();
