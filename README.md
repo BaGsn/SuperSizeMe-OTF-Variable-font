@@ -14,9 +14,8 @@ Just import the 3 libraries in your HTML page.
 ```
 
 ##Configuration
-To be sure that your 
 
-Run a fonction before SuperSizeMe.
+Run a fonction before SuperSizeMe has loaded.
 ```javascript
 ssm.beforeLoad={
 myFunction();
@@ -38,6 +37,8 @@ To get the loading informations
 ```javascript
 ssm.loading = [Array];
 ```
+
+--
 
 To define a pre-rendered specific subset:
 ```javascript
