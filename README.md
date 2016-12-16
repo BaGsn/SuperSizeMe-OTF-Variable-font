@@ -118,7 +118,7 @@ var newTxt = [String];
 myHTMLelement.updateText(newTxt);
 ```
 
-—
+--
 
 Change size:
 ``` javascript
@@ -127,55 +127,51 @@ var height = [Number];
 myHTMLelement.updateSize(width, height);
 ```
 
-—
+--
 
-``` javascript
 Apply the specific fitted font:
+``` javascript
 myHTMLelement.updateInterpolation();
 ```
 
-—
+--
 
-``` javascript
 Fit the font with css transformation (preview):
+``` javascript
 myHTMLelement.updatePreview();
 ```
 
-—
+--
 
-``` javascript
 Create a specific interpolated font:
+``` javascript
 myHTMLelement.interpolate();
 ```
 
-—
+--
 
-``` javascript
 Create the full spectrum of font intances:
-ssm.interpolate( object, subset );
-```
-
-—
-
 ``` javascript
+ssm.interpolate( object, subset );
+
+var object = { master: masterValue, factor: factorValue, name: nameValue };
+
 **var _masterValue_: [Number];** //between _0_ and _ssm.fontBook.wdth.length_
 **var _factorValue_: [Number];** //between _0_ and _1_)
 **var _nameValue_: [String];
-
-var object = { master: masterValue, factor: factorValue, name: nameValue };
 ```
 
-—
+--
 
-``` javascript
 Update the text and the state of the font:
+``` javascript
 myHTMLelement.updateAll();
 ```
 
-—
+--
 
-``` javascript
 Add a new element to the SSM object:
+``` javascript
 var myElement = document.getElementById(‘id’);
 ssm.build(myElement);
 ```
