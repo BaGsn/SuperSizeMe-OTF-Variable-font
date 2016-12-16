@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Language" content="en">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <title>SuperSizeMe demo page</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <script src="js/FontFaceObserver.js"></script>
+    <script src="js/plumin.js"></script>
+    <script src="js/supersizeme.js"></script>
+    <script type="text/javascript">
+        ssm.fontBook = {  wdth :
+                        ['font/0.otf',
+                        'font//1.otf',
+                        'font/2.otf']
+                      };
+        ssm.beforeLoad = function(){
+        }
+        ssm.afterFontReady = function(){
+        }
+        ssm.afterAnimationReady = function(){
+        }
+        </script>
+        <style type="text/css">
+          #content{
+            font-size: 3em;
+            margin:35px 50px;
+          }
+          a, a:visited {
+              text-decoration: none;
+              color: inherit;
+          }
+          a:hover, a:active {
+              color: grey;
+              cursor: pointer;
+              transition: color 500ms;
+          }
+
+          .box{
+            width: 50%;
+          }
+        </style>
+</head>
+
+<body>
+    <div id="content">
+      <div class="rt box" data-contenteditable="true">
+        PLEASE EDIT THIS TEXT
+      </div>
+      <div class="rt box" data-contenteditable="true">
+        INSIDE
+      </div>
+      <div class="rt box" data-contenteditable="true">
+        ALL THESES BOXES
+      </div>
+      <div class="rt box" data-contenteditable="true">
+        AND
+      </div>
+      <div class="rt box" data-contenteditable="true">
+        RESIZE
+      </div>
+      <div class="rt box" data-contenteditable="true">
+        YOUR WINDOW!
+      </div>
+    </div>
+</html>
